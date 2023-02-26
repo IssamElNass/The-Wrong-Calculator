@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Wrong Calculator</title>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background-color: #1a1a1a;
+        margin: 0;
+        height: 100vh;
+      }
+      * {
+        font-family: "Satoshi", sans-serif;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+      }
+
+      .title {
+        font-weight: 900;
+        font-size: 34px;
+        line-height: 60px;
+        color: #fd9535;
+        text-align: center;
+      }
+
+      .footer-title {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 60px;
+        color: #fd9535;
+        text-align: center;
+      }
+
+      #calculator {
+        width: 315px;
+        height: 578px;
+        background: #fd9535;
+        border-radius: 10px;
+      }
+
+      .rows {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+      }
+
+      .button {
+        background: #1e1e1e;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0px;
+        width: 65px;
+        height: 65px;
+        font-weight: 400;
+        font-size: 32px;
+        border: none;
+        color: #ffffff;
+        cursor: pointer;
+      }
+
+      .input-button {
+        border: none;
+        background: none;
+        color: white;
+        font-weight: 600;
+        font-size: 25px;
+        cursor: pointer;
+      }
+
+      #result {
+        background: none;
+        border: none;
+        text-align: right;
+        width: 100%;
+        font-weight: 700;
+        font-size: 34px;
+        height: 100px;
+        color: #1e1e1e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">Make a calculation</h1>
+      <span class="footer-title" style="display: none" id="fun"
+        >The answer looks off, is your calculation wrong?</span
+      >
+      <table id="calculator">
+        <tbody id="calculator-body">
+          <tr>
+            <td colspan="3" style="padding-right: 15px">
+              <input type="text" disabled value="0" id="result" />
+            </td>
+          </tr>
+          <tr class="rows">
+            <td class="button" style="visibility: hidden">
+              <input type="button" value="4" />
+            </td>
+            <td class="button" style="visibility: hidden">
+              <input type="button" value="5" style="visibility: hidden" />
+            </td>
+            <td
+              class="button"
+              onclick="result.value = '0'; fun.style.display = 'none';"
+            >
+              <input
+                class="input-button"
+                type="button"
+                style="color: #fd9535"
+                value="C"
+              />
+            </td>
+            <td class="button" onclick="result.value += '/'">
+              <input class="input-button" type="button" value="/" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="footer-title">Issam El Nasiri - 2023</p>
+    </div>
+
+    <script>
+      const calculator = document.getElementById("calculator-body");
+      const result = document.getElementById("result");
+      const fun = document.getElementById("fun");
+      const rows = [
+        {
+          data: [1, 2, 3, "X"],
+        },
+        {
+          data: [4, 5, 6, "-"],
+        },
+        {
+          data: [7, 8, 9, "+"],
+        },
+        {
+          data: [0, ",", "="],
+        },
+      ];
+
+      for (let index = 0; index < 4; index++) {
+        const row = document.createElement("tr");
+        const info = rows[index];
+        row.classList.add("rows");
+        info.data.forEach((element) => {
+          console.log(element);
+          createButton(element, row);
+        });
+      }
+
+      function createButton(el, row) {
+        const col = document.createElement("td");
+        const inp = document.createElement("input");
+
+        if (el === 0) {
+          col.colSpan = 2;
+          col.style.width = "150px";
+        }
+
+        inp.type = "button";
+        inp.value = el;
+        col.classList.add("button");
+        if (el === "=") {
+          col.addEventListener("click", solve);
+        } else {
+          col.addEventListener("click", function () {
+            fun.style.display = "none";
+            if (result.value === "0") result.value = "";
+            result.value += el;
+          });
+        }
+        inp.classList.add("input-button");
+        col.appendChild(inp);
+        row.appendChild(col);
+        calculator.appendChild(row);
+      }
+
+      function solve() {
+        let inputValue = document.getElementById("result").value;
+        let replacedValue = inputValue.toString().replace(/X/g, "*");
+        let replacedCommaValue = inputValue.toString().replace(/,/g, ".");
+        let mathResult = "";
+        if (replacedCommaValue === "9+10") {
+          mathResult = "21";
+        } else {
+          let finalResult = getRandomNumber(10, 1500);
+          mathResult = eval(parseFloat(replacedCommaValue) + finalResult);
+        }
+        document.getElementById("result").value = parseFloat(mathResult)
+          .toFixed(2)
+          .toString()
+          .replace(/[.]/g, ",");
+        fun.style.display = "block";
+      }
+
+      function getRandomNumber(min, max) {
+        return Math.random() * (max - min + 1) + min;
+      }
+    </script>
+  </body>
+</html>
